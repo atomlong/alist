@@ -17,7 +17,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: xhofe/alist
+          images: atomlong/alist
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -28,7 +28,7 @@ jobs:
       - name: Login to DockerHub
         uses: docker/login-action@v2
         with:
-          username: xhofe
+          username: atomlong
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push
@@ -49,7 +49,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
         with:
-          repository: alist-org/with_aria2
+          repository: atomlong/with_aria2
           ref: main
           persist-credentials: false
           fetch-depth: 0
@@ -65,4 +65,4 @@ jobs:
         with:
           github_token: ${{ secrets.MY_TOKEN }}
           branch: main
-          repository: alist-org/with_aria2
+          repository: atomlong/with_aria2
