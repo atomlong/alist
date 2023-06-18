@@ -34,7 +34,7 @@ FetchWebDev() {
 }
 
 FetchWebRelease() {
-  curl -L https://github.com/alist-org/alist-web/releases/latest/download/dist.tar.gz -o dist.tar.gz
+  curl -L https://ghproxy.com/https://github.com/alist-org/alist-web/releases/latest/download/dist.tar.gz -o dist.tar.gz
   tar -zxvf dist.tar.gz
   rm -rf public/dist
   mv -f dist public
@@ -120,6 +120,11 @@ BuildRelease() {
   mv alist-* build
 }
 
+BuildDebug() {
+  export CGO_ENABLED=1
+  go build
+}
+
 MakeRelease() {
   cd build
   mkdir compress
@@ -159,6 +164,9 @@ elif [ "$1" = "release" ]; then
     BuildRelease
     MakeRelease
   fi
+elif [ "$1" == "debug" ]; then
+  FetchWebRelease
+  BuildDebug
 else
   echo -e "Parameter error"
 fi
