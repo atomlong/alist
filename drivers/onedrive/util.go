@@ -9,6 +9,7 @@ import (
 	"net/http"
 	stdpath "path"
 	"strconv"
+	"time"
 
 	"github.com/alist-org/alist/v3/drivers/base"
 	"github.com/alist-org/alist/v3/internal/driver"
@@ -192,9 +193,19 @@ func (d *Onedrive) upBig(ctx context.Context, dstDir model.Obj, stream model.Fil
 		req.Header.Set("Content-Length", strconv.Itoa(int(byteSize)))
 		req.Header.Set("Content-Range", fmt.Sprintf("bytes %d-%d/%d", finish, finish+byteSize-1, stream.GetSize()))
 		finish += byteSize
-		res, err := base.HttpClient.Do(req)
-		if err != nil {
-			return err
+		var retry int64 = 0
+		var res *http.Response = nil
+		for {
+			res, err = base.HttpClient.Do(req)
+			if err != nil {
+				if retry < 6 {
+					time.Sleep(time.Minute * time.Duration(retry+10))
+					retry++
+					continue
+				}
+				return err
+			}
+			break
 		}
 		if res.StatusCode != 201 && res.StatusCode != 202 {
 			data, _ := io.ReadAll(res.Body)
